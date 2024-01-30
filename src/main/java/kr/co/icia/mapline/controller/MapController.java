@@ -44,6 +44,8 @@ public class MapController {
 		if (fromPoint != null && toPoint != null) {
 			List<Point> pointList = KakaoApiUtil.getVehiclePaths(fromPoint, toPoint);
 			String pointListJson = new ObjectMapper().writer().writeValueAsString(pointList);
+			System.out.println("pointListJson");
+			System.out.println(pointListJson);
 			model.addAttribute("pointList", pointListJson);
 		}
 		return "map/paths";
@@ -93,12 +95,14 @@ public class MapController {
 	}
 	
 	
-	
-	
 	   @GetMapping("/map/search")
 	    public String getKeyword(@RequestParam(required = false) String keyword, //keyword를 입력받음
 	                             @RequestParam(required = false) String x, //x좌표를 입력받음
 	                             @RequestParam(required = false) String y, Model model) throws IOException, InterruptedException { //y좌표를 입력받음
+		   System.out.println("x");
+		   System.out.println(x);
+		   System.out.println("y");
+		   System.out.println(y);
 	        if (keyword != null && !keyword.isEmpty() &&
 	            x != null && !x.isEmpty() &&
 	            y != null && !y.isEmpty()) { //keyword, x, y값이 모두 입력되었을 때 실행

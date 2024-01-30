@@ -15,8 +15,8 @@
 
 <form>
     검색 : <input type="text" name="keyword" th:value="${param.keyword}"/> <!-- 검색어 입력 -->
-    <input type="hidden" name="x" value="126.675113024566}" id="x"> <!-- 저어기 밑에 현재위치 구하는 함수있음 -->
-    <input type="hidden" name="y" value="37.4388938204128" id="y"> <!-- 저어기 밑에 현재위치 구하는 함수있음 -->
+    <input type="hidden" name="x" value="${param.x}" id="x"> <!-- 저어기 밑에 현재위치 구하는 함수있음 -->
+    <input type="hidden" name="y" value="${param.y}" id="y"> <!-- 저어기 밑에 현재위치 구하는 함수있음 -->
 
     <button>변환</button> <!-- 검색 버튼 -->
 </form>
@@ -47,44 +47,27 @@
     }
     
     
-
-    if (navigator.geolocation) { // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+  //---------------------------------geolocation---------------------------------//
+  //  if (navigator.geolocation) { // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
 
         // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-        navigator.geolocation.getCurrentPosition(function (position) {
+       // navigator.geolocation.getCurrentPosition(function (position) {
 
-            var lat = position.coords.latitude, // 위도
-                lon = position.coords.longitude; // 경도
-            document.getElementById("x").value = lon; // 현재위치의 x좌표를 input태그에 넣어줌
-            document.getElementById("y").value = lat; // 현재위치의 y좌표를 input태그에 넣어줌
-            var locPosition = new kakao.maps.LatLng(37.4388938204128, 126.675113024566), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                message = '<div style="padding:5px;">ICIA</div>'; // 인포윈도우에 표시될 내용입니다
-           displayMarker(locPosition, message);// 마커와 인포윈도우를 표시합니다
+            //var lat = position.coords.latitude, // 위도
+              //  lon = position.coords.longitude; // 경도
+            //document.getElementById("x").value = lon; // 현재위치의 x좌표를 input태그에 넣어줌
+            //document.getElementById("y").value = lat; // 현재위치의 y좌표를 input태그에 넣어줌
+            //var locPosition = new kakao.maps.LatLng(37.4388938204128, 126.675113024566), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+             //   message = '<div style="padding:5px;">ICIA</div>'; // 인포윈도우에 표시될 내용입니다
+           //displayMarker(locPosition, message);// 마커와 인포윈도우를 표시합니다
            
            //---------------------------------path---------------------------------//
-       	var pointList = JSON.parse([[${pointListJson}]])||[];
-           if(pointList.length > 0) {
-   			// 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다
-   			var linePath = [];
-   			for(var point of pointList) {
-   				linePath.push(new kakao.maps.LatLng(point.y, point.x));
-   			}
-   			
-   			// 지도에 표시할 선을 생성합니다
-   			var polyline = new kakao.maps.Polyline({
-   			    path: linePath, // 선을 구성하는 좌표배열 입니다
-   			    strokeWeight: 15, // 선의 두께 입니다
-   			    strokeColor: 'red', // 선의 색깔입니다
-   			    strokeOpacity: 0.5, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-   			    strokeStyle: 'solid' // 선의 스타일입니다
-   			});
-   			// 지도에 선을 표시합니다 
-   			polyline.setMap(map);
-   		}
+           
+           
    		
    	
-        });
-    }
+      //  });
+   // }
     
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
@@ -94,6 +77,20 @@
 
     var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
     
+    //---------------------------------path---------------------------------//
+    //마커가 표시될 위치입니다 
+var markerPosition  = new kakao.maps.LatLng(37.4388938204128,  126.675113024566),
+	message = '<div style="padding:5px;">인천일보아카데미</div>';
+	displayMarker(markerPosition, message);
+
+//마커를 생성합니다.
+var marker = new kakao.maps.Marker({
+position: markerPosition
+});
+
+
+//마커를 생성합니다.
+marker.setMap(map);
   
 
     // 마커 이미지의 이미지 주소입니다
@@ -146,6 +143,28 @@
         }
        
     }
+
+
+//---------------------------------path---------------------------------//
+       	var pointList = JSON.parse([[${pointListJson}]])||[];
+           if(pointList.length > 0) {
+   			// 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다
+   			var linePath = [];
+   			for(var point of pointList) {
+   				linePath.push(new kakao.maps.LatLng(point.y, point.x));
+   			}
+   			
+   			// 지도에 표시할 선을 생성합니다
+   			var polyline = new kakao.maps.Polyline({
+   			    path: linePath, // 선을 구성하는 좌표배열 입니다
+   			    strokeWeight: 8, // 선의 두께 입니다
+   			    strokeColor: 'red', // 선의 색깔입니다
+   			    strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+   			    strokeStyle: 'solid' // 선의 스타일입니다
+   			});
+   			// 지도에 선을 표시합니다 
+   			polyline.setMap(map);
+   		}
 </script>
 </body>
 </html>

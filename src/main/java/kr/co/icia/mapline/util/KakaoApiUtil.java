@@ -106,8 +106,8 @@ public class KakaoApiUtil {
 		String url = "https://dapi.kakao.com/v2/local/search/keyword.json";
 		//String url = "https://dapi.kakao.com/v2/local/search/address.json";
 		url += "?query=" + URLEncoder.encode(keyword, "UTF-8")
-		+"&x=" + Double.parseDouble(x)//
-		+"&y=" + Double.parseDouble(y)
+		+"&x=" + Double.parseDouble("126.675113024566")//
+		+"&y=" + Double.parseDouble("37.4388938204128")
 		+"&radius=5000";
 		
 		

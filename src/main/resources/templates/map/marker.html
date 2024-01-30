@@ -21,21 +21,22 @@
 		<div th:if="${toPoint != null}">
 			x:<span th:text="${toPoint.x}"></span>, y:<span th:text="${toPoint.y}"></span>
 		</div>
-		
-		검색:<input type = "text" name ="searchName" th:value="${param.searchName}"/><button>검색</button>
 	</form>
-</p>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=35ccb3091090c4419102d804c34650fb"></script>
-<script th:inline="javascript">
+
+<script th:inline="javascript"> // 이걸 써야지만 String 형식으로 데이터가 깨지지 않고 들어옴. { 필수 }
+
+
 	// 버튼을 클릭하면 아래 배열의 좌표들이 모두 보이게 지도 범위를 재설정합니다
     var points = [
-	    new kakao.maps.LatLng( [[${fromPoint?.y}]], [[${fromPoint?.x}]]),
-	    new kakao.maps.LatLng( [[${toPoint?.y}]], [[${toPoint?.x}]]),
-	];
+	    new kakao.maps.LatLng( [[${fromPoint?.y}]], [[${fromPoint?.x}]]), //대괄호 두개로 묶어줘야 타임리프 문법이 될 수 있음.
+	    new kakao.maps.LatLng( [[${toPoint?.y}]], [[${toPoint?.x}]]),	// JavaScript에서 변수값으로 사용하려면.
+	];				// ? : 조건문이 포함된 문법. to point가 있어? 그럼 y를 찍어줘 / 일종의 안전 장치 
+					
 </script> 
-<script>
 
+<script>
 // 윈포도우 만듦 마커를 클릭하면 장소 정보가 나오게
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 
@@ -50,7 +51,7 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
 //마커가 표시될 위치입니다 
-var markerPosition  = new kakao.maps.LatLng(37.4388938204128, 126.675113024566); 
+var markerPosition  = new kakao.maps.LatLng(37.4388938204128,  126.675113024566); 
 
 // 마커를 생성합니다.
 var marker = new kakao.maps.Marker({
@@ -80,46 +81,7 @@ function setBounds() {
     map.setBounds(bounds);
 }
 
-//장소 검색 객체를 생성합니다
-var ps = new kakao.maps.services.Places(); 
 
-// 키워드로 장소를 검색합니다
-ps.keywordSearch('이태원 맛집', placesSearchCB); 
-
-// 키워드 검색 완료 시 호출되는 콜백함수 입니다
-function placesSearchCB (data, status, pagination) {
-    if (status === kakao.maps.services.Status.OK) {
-
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-        // LatLngBounds 객체에 좌표를 추가합니다
-        var bounds = new kakao.maps.LatLngBounds();
-
-        for (var i=0; i<data.length; i++) {
-            displayMarker(data[i]);    
-            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }       
-
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-        map.setBounds(bounds);
-    } 
-}
-
-// 지도에 마커를 표시하는 함수입니다
-function displayMarker(place) {
-    
-    // 마커를 생성하고 지도에 표시합니다
-    var marker = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(place.y, place.x) 
-    });
-
-    // 마커에 클릭이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'click', function() {
-        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-        infowindow.open(map, marker);
-    });
-}
 
 </script>
 </body>
