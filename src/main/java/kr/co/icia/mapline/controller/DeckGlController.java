@@ -1,5 +1,9 @@
 package kr.co.icia.mapline.controller;
 
-public class DeckGlController {
+import org.springframework.stereotype.Controller;
 
+
+@Controller
+public class DeckGlController {
+	
 }

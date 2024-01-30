@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.annotation.Testable;
 
 import kr.co.icia.mapline.util.KakaoApiUtil.Point;
 
@@ -28,4 +29,10 @@ public class KakaoUtilTest {
 			System.out.println("x:" + point.getX() + ",y:" + point.getY());
 		}
 	}
+	
+//	@Test
+//	public void searchPointbyAddressTest()throws IOException, InterruptedException{
+//		KakaoApiUtil.searchPointByAddress("약국");	
+//	}
+
 }
