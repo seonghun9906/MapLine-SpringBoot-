@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.icia.mapline.util.KakaoApiUtil;
+import kr.co.icia.mapline.util.KakaoApiUtil.Pharmacy;
 import kr.co.icia.mapline.util.KakaoApiUtil.Point;
 
 @Controller
@@ -97,31 +98,33 @@ public class MapController {
 	
 	   @GetMapping("/map/search")
 	    public String getKeyword(@RequestParam(required = false) String keyword, //keyword를 입력받음
-	                             @RequestParam(required = false) String x, //x좌표를 입력받음
-	                             @RequestParam(required = false) String y, Model model) throws IOException, InterruptedException { //y좌표를 입력받음
-		   System.out.println("x");
-		   System.out.println(x);
-		   System.out.println("y");
-		   System.out.println(y);
-	        if (keyword != null && !keyword.isEmpty() &&
-	            x != null && !x.isEmpty() &&
-	            y != null && !y.isEmpty()) { //keyword, x, y값이 모두 입력되었을 때 실행
-	            List<KakaoApiUtil.Pharmacy> pharmacyList = KakaoApiUtil.searchPointByAddress(keyword, x, y); //keyword, x, y값을 getPointsByKeyword에 넣어서 반환되는 Pharmacy로 구성된 List를 저장
+	                              //x좌표를 입력받음
+	                             Model model) throws IOException, InterruptedException { //y좌표를 입력받음
+	        if (keyword != null && !keyword.isEmpty())
+	             { //keyword, x, y값이 모두 입력되었을 때 실행
+	            List<KakaoApiUtil.Pharmacy> pharmacyList = KakaoApiUtil.searchPointByAddress(keyword); //keyword, x, y값을 getPointsByKeyword에 넣어서 반환되는 Pharmacy로 구성된 List를 저장
 	            int cnt = 0; //pharmacyList의 크기를 저장할 변수
 	            assert pharmacyList != null;//pharmacyList가 null이 아닐 때 실행
 //	            ------------------------------수정 목록 -----------------------------------------//
 	            List<Point> pointList = new ArrayList<>();
+	            // 특정 좌표를 0번 인덱스에 추가
+	            double specificX = 126.675113024566;  // 특정 x 좌표
+	            double specificY = 37.4388938204128;  // 특정 y 좌표
+	            String nameString = "인천일보 아카데미";
+	            String tel = "032-123-1234";
+	            String urlString = "123456@asdfghj";
+	            pharmacyList.add(0, new KakaoApiUtil.Pharmacy(specificX, specificY,nameString, tel, urlString ));
+	            
 	            for (int i=1; i<pharmacyList.size(); i++) {
 	            	KakaoApiUtil.Pharmacy prevPharmacy = pharmacyList.get(i-1);
 	            	KakaoApiUtil.Pharmacy nextPharmacy = pharmacyList.get(i);
 	            	Point fromPoint = new Point(prevPharmacy.getX(),prevPharmacy.getY());
 	            	Point toPoint = new Point(nextPharmacy.getX(),nextPharmacy.getY());
 	            	
+	            	
 	            	pointList.addAll(KakaoApiUtil.getVehiclePaths(fromPoint, toPoint));
 	            }
-//	            for (KakaoApiUtil.Pharmacy pharmacy : pharmacyList) { //pharmacyList의 크기만큼 반복
-//	                cnt++; //pharmacyList의 크기를 저장
-//	            }            
+            
 //	           System.out.println(cnt); //pharmacyList의 크기를 출력
 	            String pointListjson = new ObjectMapper().writer().writeValueAsString(pointList);//pharmacyList를 json형태로 변환
 	            String pharmacyListJson = new ObjectMapper().writer().writeValueAsString(pharmacyList);//pharmacyList를 json형태로 변환 
@@ -129,6 +132,9 @@ public class MapController {
 	            model.addAttribute("pharmacyList", pharmacyListJson); //html로 보냄
 	            System.out.println("실행됨"); //실행됐는지 확인
 	        }
+	        //---------------------------------------------------------------------------------//
+	   
+	        //----------------------------------------------------------------------------------//
 	        return "map/search"; //html 파일위치
 	    }
 	

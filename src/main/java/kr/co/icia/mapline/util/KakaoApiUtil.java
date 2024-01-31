@@ -101,13 +101,16 @@ public class KakaoApiUtil {
 
 	/**************************************************************************************************************************************/
 
-	public static List<Pharmacy> searchPointByAddress(String keyword, String x, String y)
+	public static List<Pharmacy> searchPointByAddress(String keyword)
 			throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
 		String url = "https://dapi.kakao.com/v2/local/search/keyword.json";
 		// String url = "https://dapi.kakao.com/v2/local/search/address.json";
-		url += "?query=" + URLEncoder.encode(keyword, "UTF-8") + "&x=" + Double.parseDouble("126.675113024566")//
-				+ "&y=" + Double.parseDouble("37.4388938204128") + "&radius=5000";
+		url += "?query=" + URLEncoder.encode(keyword, "UTF-8") + 
+				"&x=" + 126.675113024566
+				+ "&y=" + 37.4388938204128 
+				+ "&radius=5000";
+//
 
 		HttpRequest request = HttpRequest.newBuilder()//
 				.header("Authorization", "KakaoAK " + REST_API_KEY)//
@@ -119,12 +122,9 @@ public class KakaoApiUtil {
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		String responseBody = response.body();
 		System.out.println(responseBody);
-		
-		
 
 		List<Pharmacy> pharmacyList = new ArrayList<>(); // 화면에 표시할 Pharmacy들을 저장할 pharmacyList 생성 저어기 밑에 pharmacy class
-															
-	
+
 		System.out.println("여기입니다" + pharmacyList.size());
 
 		Places places = new ObjectMapper().readValue(responseBody, Places.class); // 응답받은 값(responseBody)을 Places 인스턴스에
@@ -134,7 +134,7 @@ public class KakaoApiUtil {
 		if (documents.isEmpty() || meta == null) { // 값이 없을 경우 오류 가능성이 있어 null처리
 			return null; // null 반환
 		}
-		
+
 		int firstPageMarker = 15;
 		for (Places.Document document : documents) { // enhanced for문으로 documents안의 document들을 각각 탐색하여 Pharmacy 객체를 생성하고
 														// pharmacyList에 저장
@@ -148,9 +148,9 @@ public class KakaoApiUtil {
 			// }else {
 			// break;
 			// }
-			
+
 		}
-		
+
 		if (meta.getTotal_count() > 15) { // 검색된 장소가 15개를 넘어갈 경우
 			for (int i = 1; i <= Math.min(meta.getTotal_count() / 15, 15); i++) { // 15개씩 나눠서 검색
 				String url2 = url + "&page=" + (i + 1); // api 주소에 page값 추가
@@ -162,8 +162,8 @@ public class KakaoApiUtil {
 						.build();// api 요청 양식 완성
 				HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());// 요청을 보내서
 																												// 온 응답을
-																				// response에
-																												// 저장
+				// response에
+				// 저장
 				String responseBody2 = response2.body();// 응답받은 값의 body값을 responseBody에 저장
 				System.out.println("keyword: " + responseBody2);// 출력
 				Places places2 = new ObjectMapper().readValue(responseBody2, Places.class);// 응답받은 값(responseBody2)을
@@ -175,7 +175,7 @@ public class KakaoApiUtil {
 				if (documents2.isEmpty() || meta2 == null) {// 값이 없을 경우 오류 가능성이 있어 null처리
 					return null;// null 반환
 				}
-				
+
 				for (Places.Document document : documents2) {// enhanced for문으로 documents2안의 document들을 각각 탐색하여 Pharmacy
 																// 객체를 생성하고 pharmacyList에 저장
 					if (firstPageMarker > 0) {
@@ -193,10 +193,8 @@ public class KakaoApiUtil {
 			}
 		}
 		return pharmacyList;
+
 	}
-	
-	
-		
 
 	@JsonIgnoreProperties(ignoreUnknown = true) // api로 받아온 json값에서 원하는 값(vertexes)만 추출하기 위해 class안에 class가 들어가는 식으로 분리함
 	public static class KakaoDirections { // KakaoDiretions 안에 Route 요소 안에 Section 요소 안에 Road요소 안에 vertexes가 들어있는 구조
